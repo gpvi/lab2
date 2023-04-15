@@ -1,0 +1,56 @@
+program@block 
+block@{ decls stmts } 
+decls@decls¡¯ 
+decls¡¯@decl decls¡¯ 
+decls¡¯@¦Å 
+decl@type id ; 
+type@basic type¡¯ 
+type¡¯@[ num ] type¡¯ 
+type¡¯@¦Å 
+stmts@stmts¡¯ 
+stmts¡¯@stmt stmts¡¯ 
+stmts¡¯@¦Å 
+stmt@loc = bool ; 
+stmt@if ( bool ) stmt A 
+stmt@while ( bool ) stmt 
+stmt@do stmt while ( bool ) ; 
+stmt@break ; 
+stmt@block 
+A@else stmt 
+A@¦Å 
+loc@id loc¡¯ 
+loc¡¯@[ num ] loc¡¯ 
+loc¡¯@¦Å 
+bool@join bool¡¯ 
+bool¡¯@|| join bool¡¯ 
+bool¡¯@¦Å 
+join@equality join¡¯ 
+join¡¯@&& equality join¡¯ 
+join¡¯@¦Å 
+equality@rel equality¡¯ 
+equality¡¯@== rel equality¡¯ 
+equality¡¯@!= rel equality¡¯ 
+equality¡¯@¦Å 
+rel@expr B 
+B@< expr 
+B@<= expr 
+B@>= expr 
+B@> expr 
+B@¦Å 
+expr@term expr¡¯ 
+expr¡¯@+ term expr¡¯ 
+expr¡¯@- term expr¡¯ 
+expr¡¯@¦Å 
+term@unary term¡¯ 
+term¡¯@* unary term¡¯ 
+term¡¯@/ unary term¡¯ 
+term¡¯@¦Å 
+unary@! unary 
+unary@- unary 
+unary@factor 
+factor@( bool ) 
+factor@loc 
+factor@num 
+factor@real 
+factor@true 
+factor@false 
