@@ -4,7 +4,8 @@ import sys
 from copy import deepcopy
 from get_first import FirstSet
 from get_follow import FollowSet
-
+import pandas as pd
+import numpy as np
 first = FirstSet()
 follow = FollowSet()
 first_set = first.first_set
@@ -61,7 +62,7 @@ class SetI:
         self.get_sentences()
         self.from_set = -1
         self.by_ch = ""
-
+        self.goto_table = {}
     def add_goto(self,x,next_setI):
         if x not in self.goto_ch:
             self.goto_ch[x] = next_setI
@@ -90,12 +91,17 @@ class CSet:
     def __init__(self):
         self.count = -1
         self.contain  = set()
+        self.dic = {}
+        self.sorted_list = []
     def add(self,x:SetI):
         self.count += 1
         x.index = self.count
         self.contain.add(x)
-
-
+    def set_to_index(self):
+        for i in self.contain:
+            self.dic[i] = i.index
+    def sortedc(self):
+        self.sorted_list = sorted(list(self.contain))
 # sub_function 求闭包
 def closure(cur_set: SetI):
     I = cur_set.contain
@@ -153,7 +159,8 @@ def goto(cur_set:SetI, x: str):
     if len(j) == 0:
         return 1
     else:
-        new_set = SetI(j)
+        temp = SetI(j)
+        new_set = temp
     return closure(new_set)
 # 总集
 
@@ -179,24 +186,83 @@ def items(g):
                     if temp_set not in C.contain:
                         temp_set.from_set = i.index
                         temp_set.by_ch = ch
-                        i.add_goto(ch,temp_set)
+                        # print(temp_set.index)
+                        if ch not in i.goto_table:
+                            i.goto_table[ch] = set()
+                            i.goto_table[ch].add(temp_set)
+                        else:
+                            i.goto_table[ch].add(temp_set)
                         C.add(temp_set)
                         flag= 0
+                    else:
+                        for j in iter(C.contain):
+                            if j == temp_set:
+                                if ch not in i.goto_table:
+                                    i.goto_table[ch] = set()
+                                    i.goto_table[ch].add(temp_set)
+                                else:
+                                    i.goto_table[ch].add(temp_set)
     return C
 
-
-
-if __name__ == '__main__':
+def get_set():
     g = CSet()
     g = items(g)
-    print(g.count)
-    res =  sorted(list(g.contain))
-    for i in res:
-        print("序列：", i.index)
-        print("form:", i.from_set, "by:", i.by_ch)
-        for k in i.contain:
-            # print(k.sentence_for_hash)
-            if k.n_p == k.l_right:
-                print(k.sentence_for_hash)
-            # print(k.sentence_for_hash)
-        print("---------------------")
+    # print(g.count)
+    g.set_to_index()
+    # print(g.dic)
+    g.sortedc()
+    return g
+    # for i in res:
+    #     print("序列：", i.index)
+    #     print("form:", i.from_set, "by:", i.by_ch)
+    #     for k in i.contain:
+    #         print(k.sentence_for_hash)
+    #         # if k.n_p == k.l_right:
+    #         #     print(k.sentence_for_hash)
+    #         # print(k.sentence_for_hash)
+    #     print("---------------------")
+
+
+def init_action_table():
+    ch = list(follow.input_set)
+    ch.append("$")
+    # ch_no_term = list(first.no_term)
+    # ch = ch +ch_no_term
+    ch.sort()
+    # print(ch)
+    # get_set()
+    index = [i for i in range(0,197)]
+    temp = np.zeros((197,len(ch)),dtype="str")
+    df = pd.DataFrame(temp,index=index,columns=ch)
+    # print(df)
+    return df
+def init_goto_table():
+    ch = list(first.no_term)
+    ch.sort()
+    index = [i for i in range(0, 197)]
+    temp = np.zeros((197, len(ch)), dtype="str")
+    df = pd.DataFrame(temp, index=index, columns=ch)
+    return df
+
+def start():
+    states = get_set()
+    table_action = init_action_table()
+    table_goto = init_goto_table()
+    # states.set_to_index()
+    for i in states.contain:
+        # print(i.goto_ch)
+        dic = i.goto_table
+        index = i.index
+        if len(dic) != 0:
+            for j in dic.items():
+               for k in j[1]:
+                    table_action.loc[index,j[0]] = 's' + str(states.dic[k])
+
+        for j in i.contain:
+            if j.n_p == len(j.right) and j.end =="$":
+                table_action.loc[index,'$'] = 'r' + str(states.dic[k])
+    return table_action
+
+if __name__ == '__main__':
+    a = start()
+    a.to_csv('action.csv')
