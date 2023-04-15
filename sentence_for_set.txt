@@ -1,4 +1,4 @@
-program@block 
+program@
 block@{ decls stmts } 
 decls@decls¡¯ 
 decls¡¯@decl decls¡¯ 
