@@ -1,3 +1,4 @@
+# coding=utf-8
 import os
 '''
 数据介绍
@@ -70,7 +71,7 @@ class FirstSet:
 
     def _get_struct_sentence(self):
         sentence = []
-        path = "./sentence.txt"
+        path = "./lr_sentence.txt"
         with open(path, 'r', encoding='utf-8') as f:
             strs = f.readlines()
             for s in strs:
@@ -111,8 +112,7 @@ class FirstSet:
         temp_set = ch_first.copy()
         for i in temp_set:
             if i in no_term:
-                ch_first = ch_first | self._get_res_first_set(i)
-                ch_first.remove(i)
+                ch_first = ch_first
         return ch_first
 
     def _add_first(self,dic_sentence):
@@ -125,17 +125,20 @@ class FirstSet:
             first_term = [j[0] for j in i]  # 每个句子的第一项
             raw_first_term[t[0]] = set(first_term)
 
+
+        for i in raw_first_term.items():
+            print(i)
+
         for i in raw_first_term.items():
             ch_set = i[1].copy()
             for j in ch_set:
                 if j in no_term:
-                    first_set[i[0]] = first_set[i[0]] | self._get_res_first_set(j)
-                    first_set[i[0]].remove(j)
-                    # temp = first_set[i[0]] # for debug
+                    first_set[i[0]] = first_set[i[0]]
 
         ###  核心运行函数
     def _create(self):
         sentence = self._get_struct_sentence()
+
         self._create_right_term_set(sentence)
         self._create_no_term(sentence)
         # self._create_input_set()
@@ -162,5 +165,8 @@ class FirstSet:
 if __name__ == '__main__':
     first = FirstSet()
     first.first_set_to_txt()
+    # print(first.first_set)
     # first.create_input_set()
+    for i in first.first_set.items():
+        print(i)
     # print(first.input_set)

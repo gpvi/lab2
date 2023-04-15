@@ -1,14 +1,12 @@
 program @ block
 block@{ decls  stmts }
-decls @ decls  decl  | ¦Å
+decls @ decls  decl  # ¦Å
 decl @ type  id ;
-type @ type [ num ]  |  basic
-stmts @ stmts  stmt | ¦Å
-stmt @ loc=bool ;| if ( bool ) stmt| if ( bool ) stmt else stmt| while ( bool ) stmt| do stmt while ( bool )  ;| break ;| block
-Loc @ loc [ num ]  | id
-bool @bool  ||  join   |  join
-join @ join  && equality  | equality
-equality @ equality == rel  | equality != rel  | rel
-rel @ expr<expr |expr<=expr|expr>=expr|expr>expr|expr
-
-
+type @ type [ num ]  #  basic
+stmts @ stmts  stmt # ¦Å
+stmt @ loc=bool ;# if ( bool ) stmt# if ( bool ) stmt else stmt# while ( bool ) stmt# do stmt while ( bool )  ;# break ;# block
+Loc @ loc [ num ]  # id
+bool @bool  ||  join   #  join
+join @ join  && equality  # equality
+equality @ equality == rel  # equality != rel  # rel
+rel @ expr<expr #expr<=expr#expr>=expr#expr>expr#expr
