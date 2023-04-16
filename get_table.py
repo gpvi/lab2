@@ -1,5 +1,6 @@
 # coding=utf-8
 # 数据结构
+import os.path
 import sys
 from copy import deepcopy
 from get_first import FirstSet
@@ -343,8 +344,21 @@ if __name__ == '__main__':
     # get_set()
     # test()
 
-    action,goto = start()
-    action.to_csv('action.csv')
-    goto.to_csv('goto.csv')
+    # action,goto = start()
+    # action.to_csv('action.csv')
+    # goto.to_csv('goto.csv')
+
+    if not os.path.exists('.\\no_term.txt'):
+        with open('.\\no_term.txt','w') as f:
+            for i in iter(first.no_term):
+                t = i+"\n"
+                f.write(t)
+    if not os.path.exists('.\\res_sentence.txt'):
+        with open('.\\res_sentence.txt','w') as f:
+            for i in t:
+                # print(i)
+                kt = i + "\n"
+                f.write(kt)
+
     # # print(first.first_set)
     # # print(first.no_term)
