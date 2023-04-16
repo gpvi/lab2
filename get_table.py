@@ -12,7 +12,29 @@ follow = FollowSet()
 first_set = first.first_set
 follow_set = follow.follow_set
 sentence = first.sentence
+# for i in sentence.items():
+#     print(i[0])
+#     for k in i[1]:
+#         print(k)
+#     print("----------------")
+t = ['program\''+"@"+' program']
+for i in sentence.items():
+    for j in i[1]:
+        temp = i[0] + '@'
+        for n in j:
+              temp += " "+n
+        t.append(temp)
 
+# print(t)
+sentence_table = {}
+co  = 0
+for i in t:
+    sentence_table[i] = co
+    co += 1
+# print(sentence_table)
+# print(t)
+#
+# print(t[0])
 
 class GSentence:
     def __init__(self, l: str, r: list, n: str):
@@ -34,7 +56,12 @@ class GSentence:
         s += "#" + self.end + " # "
         s += str(self.n_p)
         self.sentence_for_hash = s
-
+    def to_origin_sentence(self):
+        emp = self.left
+        emp += "@"
+        for i in self.right:
+            emp += " " + i
+        return emp
     def to_dic(self):
         right = "right"
         left = "left"
@@ -97,7 +124,7 @@ class CSet:
         self.contain = set()
         self.dic = {}
         self.sorted_list = []
-
+        self.reduce_t = set()
     def add(self, x: SetI):
         self.count += 1
         x.index = self.count
@@ -233,7 +260,13 @@ def get_set():
     # for i in g.sorted_list:
     #     print("序号:",i.index)
     #     for j in i.contain:
-    #         print(j.sentence_for_hash)
+    #         # print(j.sentence_for_hash)
+    #         a = j.to_origin_sentence()
+    #         if a in t:
+    #             print("True",sentence_table[a])
+    #         else:
+    #             print('False',a,file=sys.stderr)
+    #             sys.exit(0)
     #     print("--------------------------")
 
     return g
@@ -267,20 +300,33 @@ def start():
     states = get_set()
     table_action = init_action_table()
     table_goto = init_goto_table()
-    # states.set_to_index()
+    states.set_to_index()
+    ## first step shift j
     for i in states.contain:
-        # print(i.goto_ch)
         dic = i.goto_table
         index = i.index
-        if len(dic) != 0:
-            for j in dic.items():
-                for k in j[1]:
-                    table_action.loc[index, j[0]] = 's' + str(states.dic[k])
-
+        for j in dic.items():
+            ch = j[0]
+            # if ch in first.no_term:
+            #     print(ch,file=sys.stderr)
+            t = list(j[1])
+            next_I = t[0]
+            val = states.dic[next_I]
+            if ch not in first.no_term:
+                table_action.loc[index,ch] = 's'+str(val)
+            else:
+                table_goto.loc[index,ch] =  str(val)
         for j in i.contain:
-            if j.n_p == len(j.right) and j.end == "$":
-                table_action.loc[index, '$'] = 'r' + str(states.dic[k])
-    return table_action
+            # j is a GSentence
+            if j.n_p == len(j.right) and j.left != 'program\'':
+                s = j.to_origin_sentence()
+                # print(s)
+                table_action.loc[index,j.end] = 'r'+str(sentence_table[s])
+
+        table_action.loc[1,'$'] = 'acc'
+    # step second : reduce j ;***ps:use the sentence_table for sentence index
+
+    return table_action,table_goto
 
 
 def test():
@@ -292,10 +338,13 @@ def test():
 
 
 if __name__ == '__main__':
+
     # pass
-    get_set()
+    # get_set()
     # test()
-    # a = start()
-    # # a.to_csv('action.csv')
+
+    action,goto = start()
+    action.to_csv('action.csv')
+    goto.to_csv('goto.csv')
     # # print(first.first_set)
     # # print(first.no_term)
