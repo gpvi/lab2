@@ -7,7 +7,7 @@ type@ type [ num ]
 type@ basic
 stmts@ stmts stmt
 stmts@ ε
-stmt@ loc = bool ;
+stmt@ loc=bool ;
 stmt@ if ( bool ) stmt
 stmt@ if ( bool ) stmt else stmt
 stmt@ while ( bool ) stmt
@@ -28,3 +28,18 @@ rel@ expr <= expr
 rel@ expr >= expr
 rel@ expr > expr
 rel@ expr
+expr@ expr + term
+expr@ expr - term
+expr@ term
+term@ term * unary
+term@ term / unary
+term@ unary
+unary@ ! unary
+unary@ - unary
+unary@ factor
+factor@ ( bool )
+factor@ loc
+factor@ num
+factor@ real
+factor@ true
+factor@ false

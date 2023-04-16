@@ -125,10 +125,6 @@ class FirstSet:
             first_term = [j[0] for j in i]  # 每个句子的第一项
             raw_first_term[t[0]] = set(first_term)
 
-
-        for i in raw_first_term.items():
-            print(i)
-
         for i in raw_first_term.items():
             ch_set = i[1].copy()
             for j in ch_set:
@@ -165,8 +161,4 @@ class FirstSet:
 if __name__ == '__main__':
     first = FirstSet()
     first.first_set_to_txt()
-    # print(first.first_set)
-    # first.create_input_set()
-    for i in first.first_set.items():
-        print(i)
-    # print(first.input_set)
+

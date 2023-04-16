@@ -9,4 +9,8 @@ Loc @ loc [ num ]  # id
 bool @bool  ||  join   #  join
 join @ join  && equality  # equality
 equality @ equality == rel  # equality != rel  # rel
-rel @ expr<expr #expr<=expr#expr>=expr#expr>expr#expr
+rel @ expr < expr #expr <= expr#expr >= expr#expr > expr#expr
+expr @ expr + term #expr - term #term
+term @ term * unary#term / unary#unary
+unary@ ! unary #  - unary # factor
+factor@  ( bool ) # loc # num # real # true #false

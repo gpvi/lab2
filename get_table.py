@@ -6,6 +6,7 @@ from get_first import FirstSet
 from get_follow import FollowSet
 import pandas as pd
 import numpy as np
+
 first = FirstSet()
 follow = FollowSet()
 first_set = first.first_set
@@ -30,7 +31,7 @@ class GSentence:
         s += " @ "
         for i in self.right:
             s += i + " "
-        s += "#"+  self.end + " # "
+        s += "#" + self.end + " # "
         s += str(self.n_p)
         self.sentence_for_hash = s
 
@@ -40,10 +41,12 @@ class GSentence:
         next = "end"
         n_p = "n_p"
         self.dic = {left: self.left, right: self.right, next: self.end, n_p: self.n_p}
+
     def count(self):
-        self.n_p +=1
+        self.n_p += 1
         self.to_dic()
         self.get_sentence()
+
     def __eq__(self, other):
         return self.sentence_for_hash == other.sentence_for_hash
 
@@ -63,10 +66,10 @@ class SetI:
         self.from_set = -1
         self.by_ch = ""
         self.goto_table = {}
-    def add_goto(self,x,next_setI):
+
+    def add_goto(self, x, next_setI):
         if x not in self.goto_ch:
             self.goto_ch[x] = next_setI
-
 
     def get_sentences(self):
         ts = ""
@@ -80,6 +83,7 @@ class SetI:
 
     def __hash__(self):
         return hash(self.hash_sentence)
+
     def __lt__(self, other):
         if self.index <= other.index:
             return True
@@ -90,18 +94,23 @@ class SetI:
 class CSet:
     def __init__(self):
         self.count = -1
-        self.contain  = set()
+        self.contain = set()
         self.dic = {}
         self.sorted_list = []
-    def add(self,x:SetI):
+
+    def add(self, x: SetI):
         self.count += 1
         x.index = self.count
         self.contain.add(x)
+
     def set_to_index(self):
         for i in self.contain:
             self.dic[i] = i.index
+
     def sortedc(self):
         self.sorted_list = sorted(list(self.contain))
+
+
 # sub_function 求闭包
 def closure(cur_set: SetI):
     I = cur_set.contain
@@ -124,11 +133,8 @@ def closure(cur_set: SetI):
                     last_c = ""
                     if i.n_p + 1 == i.l_right:
                         last_c = i.end
-                    elif i.right[i.n_p + 1] not in next_term:
-                        last_c = i.right[i.n_p + 1]
                     else:
-                        print("error,two no_term", file=sys.stderr)
-                        sys.exit(0)
+                        last_c = i.right[i.n_p + 1]
 
                     left = next_term
                     right = list(sentence[left])
@@ -144,12 +150,14 @@ def closure(cur_set: SetI):
     return cur_set
 
 
-def goto(cur_set:SetI, x: str):
+def goto(cur_set: SetI, x: str):
     cur_list = cur_set.contain
     j = []
+    if len(cur_set.goto_ch) == 0:
+        return 0
     # cur_list 为 GSentence 列表
     for i in iter(cur_set.goto_ch[x]):
-    #for each item
+        # for each item
         if i.n_p < i.l_right:
             if i.right[i.n_p] == x:
                 t = deepcopy(i)
@@ -162,25 +170,34 @@ def goto(cur_set:SetI, x: str):
         temp = SetI(j)
         new_set = temp
     return closure(new_set)
+
+
 # 总集
 
 
 def items(g):
     C = CSet()
-    init_g = GSentence('program\'',['program'],'$')
+    init_g = GSentence('program\'', ['program'], '$')
     init_I = SetI([init_g])
     init_I = closure(init_I)
     C.add(init_I)
     flag = 0
-    ch_list = list(follow.input_set)
+    already_clu = []
+    already_goto = []
+    already_clu.append(0)
     while flag == 0:
         flag = 1
+        # print(C.count)
         contain1 = C.contain
         contain2 = contain1.copy()
         for i in iter(contain2):
+
             # i type is class SetI
+            if i.index in already_goto:
+                continue
+            already_goto.append(i.index)
             for ch in i.goto_ch:
-                t = goto(i,ch)
+                t = goto(i, ch)
                 if type(t) != int:
                     temp_set = t
                     if temp_set not in C.contain:
@@ -193,7 +210,7 @@ def items(g):
                         else:
                             i.goto_table[ch].add(temp_set)
                         C.add(temp_set)
-                        flag= 0
+                        flag = 0
                     else:
                         for j in iter(C.contain):
                             if j == temp_set:
@@ -204,6 +221,7 @@ def items(g):
                                     i.goto_table[ch].add(temp_set)
     return C
 
+
 def get_set():
     g = CSet()
     g = items(g)
@@ -211,16 +229,14 @@ def get_set():
     g.set_to_index()
     # print(g.dic)
     g.sortedc()
+    #### for test:
+    # for i in g.sorted_list:
+    #     print("序号:",i.index)
+    #     for j in i.contain:
+    #         print(j.sentence_for_hash)
+    #     print("--------------------------")
+
     return g
-    # for i in res:
-    #     print("序列：", i.index)
-    #     print("form:", i.from_set, "by:", i.by_ch)
-    #     for k in i.contain:
-    #         print(k.sentence_for_hash)
-    #         # if k.n_p == k.l_right:
-    #         #     print(k.sentence_for_hash)
-    #         # print(k.sentence_for_hash)
-    #     print("---------------------")
 
 
 def init_action_table():
@@ -231,11 +247,13 @@ def init_action_table():
     ch.sort()
     # print(ch)
     # get_set()
-    index = [i for i in range(0,197)]
-    temp = np.zeros((197,len(ch)),dtype="str")
-    df = pd.DataFrame(temp,index=index,columns=ch)
+    index = [i for i in range(0, 197)]
+    temp = np.zeros((197, len(ch)), dtype="str")
+    df = pd.DataFrame(temp, index=index, columns=ch)
     # print(df)
     return df
+
+
 def init_goto_table():
     ch = list(first.no_term)
     ch.sort()
@@ -243,6 +261,7 @@ def init_goto_table():
     temp = np.zeros((197, len(ch)), dtype="str")
     df = pd.DataFrame(temp, index=index, columns=ch)
     return df
+
 
 def start():
     states = get_set()
@@ -255,14 +274,28 @@ def start():
         index = i.index
         if len(dic) != 0:
             for j in dic.items():
-               for k in j[1]:
-                    table_action.loc[index,j[0]] = 's' + str(states.dic[k])
+                for k in j[1]:
+                    table_action.loc[index, j[0]] = 's' + str(states.dic[k])
 
         for j in i.contain:
-            if j.n_p == len(j.right) and j.end =="$":
-                table_action.loc[index,'$'] = 'r' + str(states.dic[k])
+            if j.n_p == len(j.right) and j.end == "$":
+                table_action.loc[index, '$'] = 'r' + str(states.dic[k])
     return table_action
 
+
+def test():
+    g = GSentence('program\'', ['program'], '$')
+    s = SetI([g])
+    # C = CSet()
+    # CSet.add(s)
+    closure(s)
+
+
 if __name__ == '__main__':
-    a = start()
-    a.to_csv('action.csv')
+    # pass
+    get_set()
+    # test()
+    # a = start()
+    # # a.to_csv('action.csv')
+    # # print(first.first_set)
+    # # print(first.no_term)
