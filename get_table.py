@@ -281,8 +281,8 @@ def init_action_table():
     ch.sort()
     # print(ch)
     # get_set()
-    index = [i for i in range(0, 197)]
-    temp = np.zeros((197, len(ch)), dtype="str")
+    index = [i for i in range(0, 244)]
+    temp = np.zeros((244, len(ch)), dtype="str")
     df = pd.DataFrame(temp, index=index, columns=ch)
     # print(df)
     return df
@@ -291,14 +291,16 @@ def init_action_table():
 def init_goto_table():
     ch = list(first.no_term)
     ch.sort()
-    index = [i for i in range(0, 197)]
-    temp = np.zeros((197, len(ch)), dtype="str")
+    index = [i for i in range(0, 244)]
+    temp = np.zeros((244, len(ch)), dtype="str")
     df = pd.DataFrame(temp, index=index, columns=ch)
     return df
 
 
 def start():
     states = get_set()
+    # for i in states.sorted_list:
+    #     print(i.index)
     table_action = init_action_table()
     table_goto = init_goto_table()
     states.set_to_index()
@@ -344,21 +346,22 @@ if __name__ == '__main__':
     # get_set()
     # test()
 
-    # action,goto = start()
-    # action.to_csv('action.csv')
-    # goto.to_csv('goto.csv')
+    action,goto = start()
+    # print(action)
+    action.to_csv('action.csv')
+    goto.to_csv('goto.csv')
 
-    if not os.path.exists('.\\no_term.txt'):
-        with open('.\\no_term.txt','w') as f:
-            for i in iter(first.no_term):
-                t = i+"\n"
-                f.write(t)
-    if not os.path.exists('.\\res_sentence.txt'):
-        with open('.\\res_sentence.txt','w') as f:
-            for i in t:
-                # print(i)
-                kt = i + "\n"
-                f.write(kt)
+    # if not os.path.exists('.\\no_term.txt'):
+    #     with open('.\\no_term.txt','w') as f:
+    #         for i in iter(first.no_term):
+    #             t = i+"\n"
+    #             f.write(t)
+    # if not os.path.exists('.\\res_sentence.txt'):
+    #     with open('.\\res_sentence.txt','w') as f:
+    #         for i in t:
+    #             # print(i)
+    #             kt = i + "\n"
+    #             f.write(kt)
 
     # # print(first.first_set)
     # # print(first.no_term)
