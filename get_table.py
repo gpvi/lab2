@@ -26,16 +26,11 @@ for i in sentence.items():
               temp += " "+n
         t.append(temp)
 
-# print(t)
 sentence_table = {}
 co  = 0
 for i in t:
     sentence_table[i] = co
     co += 1
-# print(sentence_table)
-# print(t)
-#
-# print(t[0])
 
 class GSentence:
     def __init__(self, l: str, r: list, n: str):
@@ -81,7 +76,6 @@ class GSentence:
     def __hash__(self):
         return hash(self.sentence_for_hash)
 
-
 class SetI:
     def __init__(self, I: list):
         self.index = 0
@@ -117,7 +111,6 @@ class SetI:
             return True
         else:
             return False
-
 
 class CSet:
     def __init__(self):
@@ -253,22 +246,20 @@ def items(g):
 def get_set():
     g = CSet()
     g = items(g)
-    # print(g.count)
     g.set_to_index()
-    # print(g.dic)
     g.sortedc()
-    #### for test:
-    # for i in g.sorted_list:
-    #     print("序号:",i.index)
-    #     for j in i.contain:
-    #         # print(j.sentence_for_hash)
-    #         a = j.to_origin_sentence()
-    #         if a in t:
-    #             print("True",sentence_table[a])
-    #         else:
-    #             print('False',a,file=sys.stderr)
-    #             sys.exit(0)
-    #     print("--------------------------")
+
+    for i in g.sorted_list:
+        print("序号:",i.index)
+        for j in i.contain:
+            print(j.sentence_for_hash)
+            # a = j.to_origin_sentence()
+            # if a in t:
+            #     print("True",sentence_table[a])
+            # else:
+            #     print('False',a,file=sys.stderr)
+            #     sys.exit(0)
+        print("--------------------------")
 
     return g
 
@@ -305,7 +296,9 @@ def start():
     table_goto = init_goto_table()
     states.set_to_index()
     ## first step shift j
-    for i in states.contain:
+    print(type(states))
+    # for i in states.contain:
+    for i in states.sorted_list:
         dic = i.goto_table
         index = i.index
         for j in dic.items():
@@ -323,7 +316,6 @@ def start():
             # j is a GSentence
             if j.n_p == len(j.right) and j.left != 'program\'':
                 s = j.to_origin_sentence()
-                # print(s)
                 table_action.loc[index,j.end] = 'r'+str(sentence_table[s])
 
         table_action.loc[1,'$'] = 'acc'
@@ -335,8 +327,6 @@ def start():
 def test():
     g = GSentence('program\'', ['program'], '$')
     s = SetI([g])
-    # C = CSet()
-    # CSet.add(s)
     closure(s)
 
 
@@ -347,9 +337,9 @@ if __name__ == '__main__':
     # test()
 
     action,goto = start()
-    # print(action)
-    action.to_csv('action.csv')
-    goto.to_csv('goto.csv')
+    print(action.index)
+    # action.to_csv('action.csv')
+    # goto.to_csv('goto.csv')
 
     # if not os.path.exists('.\\no_term.txt'):
     #     with open('.\\no_term.txt','w') as f:
