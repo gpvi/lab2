@@ -31,7 +31,6 @@ co  = 0
 for i in t:
     sentence_table[i] = co
     co += 1
-
 class GSentence:
     def __init__(self, l: str, r: list, n: str):
         self.left = l
@@ -52,31 +51,36 @@ class GSentence:
         s += "#" + self.end + " # "
         s += str(self.n_p)
         self.sentence_for_hash = s
+    # 转为原来的语句，类型为string
     def to_origin_sentence(self):
         emp = self.left
         emp += "@"
         for i in self.right:
             emp += " " + i
         return emp
+    # 转为HashTable
     def to_dic(self):
         right = "right"
         left = "left"
         next = "end"
         n_p = "n_p"
         self.dic = {left: self.left, right: self.right, next: self.end, n_p: self.n_p}
-
+    # n_p加一 ，相当于 圆点向前移动一格
     def count(self):
         self.n_p += 1
         self.to_dic()
         self.get_sentence()
-
+    # 重写生成式哈希 用于 比较 是否相同
     def __eq__(self, other):
         return self.sentence_for_hash == other.sentence_for_hash
 
     def __hash__(self):
         return hash(self.sentence_for_hash)
-
+# 单个状态/项目
 class SetI:
+    """
+
+    """
     def __init__(self, I: list):
         self.index = 0
         # 项目集，其中内容为生成式，确保各个生成式在此项目集的唯一性 采用数据结构 -- list
@@ -99,7 +103,7 @@ class SetI:
             self.sentences.append(i.sentence_for_hash)
             ts += i.sentence_for_hash
         self.hash_sentence = ts
-
+    # 重写哈希 用于比较状态是否相同
     def __eq__(self, other):
         return self.hash_sentence == other.hash_sentence
 
@@ -111,14 +115,22 @@ class SetI:
             return True
         else:
             return False
-
+# 项目集
 class CSet:
+    """
+    count:状态数目计数
+    contain:set类型 元素未 SetI 单个项目
+    dic:Hash table 项目集: index #index 为 int 类型
+    sort_list = 排序后的项目集
+
+    """
     def __init__(self):
         self.count = -1
         self.contain = set()
         self.dic = {}
         self.sorted_list = []
-        self.reduce_t = set()
+        # self.reduce_t = set()
+
     def add(self, x: SetI):
         self.count += 1
         x.index = self.count
@@ -132,7 +144,7 @@ class CSet:
         self.sorted_list = sorted(list(self.contain))
 
 
-# sub_function 求闭包
+# sub_function 求闭包，输入为初始状态的第一个语句program'@.program,$
 def closure(cur_set: SetI):
     I = cur_set.contain
     next_ch_list = {}
@@ -142,6 +154,7 @@ def closure(cur_set: SetI):
         flag = 1
         T = J.copy()
         for i in iter(T):
+            # 处理未到终结状态的生成式
             if i.n_p < len(i.right):
                 next_term = i.right[i.n_p]
                 if i.right[i.n_p] not in next_ch_list:
@@ -193,9 +206,7 @@ def goto(cur_set: SetI, x: str):
     return closure(new_set)
 
 
-# 总集
-
-
+# 求表action goto 
 def items(g):
     C = CSet()
     init_g = GSentence('program\'', ['program'], '$')
@@ -249,17 +260,18 @@ def get_set():
     g.set_to_index()
     g.sortedc()
 
-    for i in g.sorted_list:
-        print("序号:",i.index)
-        for j in i.contain:
-            print(j.sentence_for_hash)
-            # a = j.to_origin_sentence()
-            # if a in t:
-            #     print("True",sentence_table[a])
-            # else:
-            #     print('False',a,file=sys.stderr)
-            #     sys.exit(0)
-        print("--------------------------")
+# 测试代码
+    # for i in g.sorted_list:
+    #     print("序号:",i.index)
+    #     for j in i.contain:
+    #         print(j.sentence_for_hash)
+    #         # a = j.to_origin_sentence()
+    #         # if a in t:
+    #         #     print("True",sentence_table[a])
+    #         # else:
+    #         #     print('False',a,file=sys.stderr)
+    #         #     sys.exit(0)
+    #     print("--------------------------")
 
     return g
 

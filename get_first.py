@@ -14,7 +14,9 @@ first_set = first.get_sorted_first_set()
 class FirstSet:
     def __init__(self):
         self.sentence = {}
+        # sentence type : HashTable： ('program', [['block']])
         self.no_term = set()
+        # 单个词汇
         self.no_term_list = []
         self.right_sub_term = set()
         self.input_set = set()
@@ -160,5 +162,9 @@ class FirstSet:
 
 if __name__ == '__main__':
     first = FirstSet()
-    first.first_set_to_txt()
-
+    # first.first_set_to_txt()
+    # print(type(first.sentence))
+    # for i in first.sentence.items():
+    #     print(i)
+    for i in first.first_set.items():
+        print(i)

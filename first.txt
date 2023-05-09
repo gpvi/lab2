@@ -1,0 +1,16 @@
+program ~~~~ block 
+block ~~~~ { 
+decls ~~~~ decls ¦Å 
+decl ~~~~ type 
+type ~~~~ basic type 
+stmts ~~~~ stmts ¦Å 
+stmt ~~~~ block break do if loc=bool while 
+Loc ~~~~ id loc 
+bool ~~~~ bool join 
+join ~~~~ equality join 
+equality ~~~~ equality rel 
+rel ~~~~ expr 
+expr ~~~~ expr term 
+term ~~~~ term unary 
+unary ~~~~ ! - factor 
+factor ~~~~ ( loc num real true 
