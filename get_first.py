@@ -70,7 +70,7 @@ class FirstSet:
             k = list(i[1]).copy()
             k.sort()
             self.first_set_sorted[i[0]] = k
-# 读取文法
+# 读取文法,
     def _get_struct_sentence(self):
         sentence = []
         path = "./lr_sentence.txt"
@@ -91,8 +91,14 @@ class FirstSet:
                     pass
                 ss = list(filter(lambda x: x != "", s2))
                 sentence.append([[new_s[0].replace(" ", "")], ss])
+
+
+#*********************************************************************
+ #***
+      ## 写入文件
         sentence = sentence[:-1]
         self.no_term_list = [i[0][0] for i in sentence]
+  
         if not os.path.exists('./sentence_for_set.txt'):
             with open('./sentence_for_set.txt', 'w') as f:
                 for i in sentence:
@@ -104,7 +110,8 @@ class FirstSet:
                     temps += '\n'
                     f.write(temps)
         return sentence
-
+#***
+#********************************************************************
 
     def _get_res_first_set(self, ch):
         temp_first_set = ()
@@ -127,20 +134,31 @@ class FirstSet:
         a = dic_sentence
          # 开始 first 创建
         raw_first_term = self.first_set
-        
+
         no_term = self.no_term
         first_set = self.first_set
+        # 遍历 dic_sentence
         for t in a.items():
             i = t[1]
+            # j 为 每一个单独右边生成式
+            # first_term 为 每个句子的第一个字符
             first_term = [j[0] for j in i]  # 每个句子的第一项
-            raw_first_term[t[0]] = set(first_term)
+            # 不等于自身
+            if first_term != t[0]:
+                raw_first_term[t[0]] = set(first_term)
 
-        for i in raw_first_term.items():
-            ch_set = i[1].copy()
-            for j in ch_set:
-                if j in no_term:
-                    first_set[i[0]] = first_set[i[0]]
 
+        flag = 0
+        while flag == 0:
+            for i in raw_first_term.items():
+                ch_set = i[1].copy()
+                flag = 0
+                for j in ch_set:
+                    if j in no_term:
+                        # 排除循环
+                        first_set[i[0]] = first_set[i[0]]
+                        flag = 1
+                        
         ###  核心运行函数
     def _create(self):
         # 读取 文法
@@ -158,12 +176,13 @@ class FirstSet:
         self._add_first(dic_first)
         self._sort_first()
 
+# 将first 写入到 first.txt文件
     def first_set_to_txt(self,path = 'first.txt'):
         res = self.first_set_sorted
         if not os.path.exists(path):
             with open(path, 'w') as f:
                 for i in res.items():
-                    temp_str = i[0] + " ~~~~ "
+                    temp_str = i[0] + " @ "
                     for j in i[1]:
                         temp_str += j + " "
                     f.write(temp_str + "\n")
