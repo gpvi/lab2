@@ -1,5 +1,5 @@
 # coding=utf-8
-path = './lr_sentence.txt'
+# path = './lr_sentence.txt'
 class LR_first:
 
     def __init__(self):
