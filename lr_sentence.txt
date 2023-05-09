@@ -7,7 +7,7 @@ type@ type [ num ]
 type@ basic
 stmts@ stmts stmt
 stmts@ ε
-stmt@ loc=bool ;
+stmt@ loc = bool ;
 stmt@ if ( bool ) stmt
 stmt@ if ( bool ) stmt else stmt
 stmt@ while ( bool ) stmt
