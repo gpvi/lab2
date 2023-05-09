@@ -27,7 +27,7 @@ for i in sentence.items():
         t.append(temp)
 
 sentence_table = {}
-co  = 0
+co = 0
 for i in t:
     sentence_table[i] = co
     co += 1

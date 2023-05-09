@@ -14,8 +14,8 @@ stmt@ while ( bool ) stmt
 stmt@ do stmt while ( bool ) ;
 stmt@ break ;
 stmt@ block
-Loc@ loc [ num ]
-Loc@ id
+loc@ loc [ num ]
+loc@ id
 bool@ bool || join
 bool@ join
 join@ join && equality

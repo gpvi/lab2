@@ -138,9 +138,12 @@ class FirstSet:
         no_term = self.no_term
         first_set = self.first_set
         # 遍历 dic_sentence
+
+
+
         for t in a.items():
             i = t[1]
-            # j 为 每一个单独右边生成式
+            # j 为 每一个右边生成式
             # first_term 为 每个句子的第一个字符
             first_term = [j[0] for j in i]  # 每个句子的第一项
             # 不等于自身
