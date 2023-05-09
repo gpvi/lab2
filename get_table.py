@@ -183,7 +183,7 @@ def closure(cur_set: SetI):
     cur_set.contain = J
     return cur_set
 
-
+#遇到字符执行状态跳转行为
 def goto(cur_set: SetI, x: str):
     cur_list = cur_set.contain
     j = []
@@ -206,7 +206,7 @@ def goto(cur_set: SetI, x: str):
     return closure(new_set)
 
 
-# 求表action goto 
+# 求解全部状态
 def items(g):
     C = CSet()
     init_g = GSentence('program\'', ['program'], '$')
@@ -275,7 +275,7 @@ def get_set():
 
     return g
 
-
+# DataFrame 类型 纵列 状态index,行：非终结符 +$
 def init_action_table():
     ch = list(follow.input_set)
     ch.append("$")
@@ -290,7 +290,7 @@ def init_action_table():
     # print(df)
     return df
 
-
+# DataFrame 类型 纵列 状态index,行：终结符
 def init_goto_table():
     ch = list(first.no_term)
     ch.sort()
@@ -299,7 +299,7 @@ def init_goto_table():
     df = pd.DataFrame(temp, index=index, columns=ch)
     return df
 
-
+# 填写ACTION 和 GOTO
 def start():
     states = get_set()
     # for i in states.sorted_list:
@@ -307,16 +307,15 @@ def start():
     table_action = init_action_table()
     table_goto = init_goto_table()
     states.set_to_index()
-    ## first step shift j
-    print(type(states))
     # for i in states.contain:
     for i in states.sorted_list:
+        # goto table : 
+        # 由此状态出发 到达的 状态
+        # index 当前状态
         dic = i.goto_table
         index = i.index
         for j in dic.items():
             ch = j[0]
-            # if ch in first.no_term:
-            #     print(ch,file=sys.stderr)
             t = list(j[1])
             next_I = t[0]
             val = states.dic[next_I]
@@ -324,6 +323,7 @@ def start():
                 table_action.loc[index,ch] = 's'+str(val)
             else:
                 table_goto.loc[index,ch] =  str(val)
+        # contain 中为此状态下的所有生成式
         for j in i.contain:
             # j is a GSentence
             if j.n_p == len(j.right) and j.left != 'program\'':
@@ -331,7 +331,7 @@ def start():
                 table_action.loc[index,j.end] = 'r'+str(sentence_table[s])
 
         table_action.loc[1,'$'] = 'acc'
-    # step second : reduce j ;***ps:use the sentence_table for sentence index
+        
 
     return table_action,table_goto
 

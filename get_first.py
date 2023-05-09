@@ -41,7 +41,7 @@ class FirstSet:
         for i in self.right_sub_term:
             if i not in self.no_term:
                 input_set.add(i)
-
+# 找出所有的非终结符
     def _create_no_term(self, sentence):
         no_term = self.no_term
         for i in sentence:
@@ -49,7 +49,7 @@ class FirstSet:
             t = i[0][0]
             no_term.add(t)
 
-
+# 找出所有终结符 空集 和 $ 除外
     def _create_right_term_set(self, sentence):
         for i in sentence:
             for j in i[1]:
@@ -70,7 +70,7 @@ class FirstSet:
             k = list(i[1]).copy()
             k.sort()
             self.first_set_sorted[i[0]] = k
-
+# 读取文法
     def _get_struct_sentence(self):
         sentence = []
         path = "./lr_sentence.txt"
@@ -108,6 +108,7 @@ class FirstSet:
 
     def _get_res_first_set(self, ch):
         temp_first_set = ()
+       
         first_set = self.first_set
         no_term = self.no_term
         ch_first = first_set[ch]
@@ -118,8 +119,15 @@ class FirstSet:
         return ch_first
 
     def _add_first(self,dic_sentence):
+        """
+        dic_sentence: 
+            键: 非终结符 
+            值: 句子(词列表) 列表 ---->二维 
+        """
         a = dic_sentence
+         # 开始 first 创建
         raw_first_term = self.first_set
+        
         no_term = self.no_term
         first_set = self.first_set
         for t in a.items():
@@ -135,13 +143,18 @@ class FirstSet:
 
         ###  核心运行函数
     def _create(self):
+        # 读取 文法
         sentence = self._get_struct_sentence()
-
+        # 将 生成式的右边句子分词
         self._create_right_term_set(sentence)
+        # 创建 非终结符集合
         self._create_no_term(sentence)
         # self._create_input_set()
+        # 整合句子,以哈希表的形式存储,键为非终结符,值为 生成式 右部
         dic_first = self._get_dic_suport_first(sentence)
+        # 创建 终结符集合
         self.create_input_set()
+        # 求first 集合
         self._add_first(dic_first)
         self._sort_first()
 
