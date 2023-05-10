@@ -173,10 +173,10 @@ def closure(cur_set: SetI):
                 next_term = i.right[i.n_p]
                 # 收集 添加下一个字符相同的句子
                 if i.right[i.n_p] not in next_ch_table:
-                    next_ch_table[i.right[i.n_p]] = set()
-                    next_ch_table[i.right[i.n_p]].add(i)
+                    next_ch_table[i.right[i.n_p]] = []
+                    next_ch_table[i.right[i.n_p]].append(i)
                 else:
-                    next_ch_table[i.right[i.n_p]].add(i)
+                    next_ch_table[i.right[i.n_p]].append(i)
 
                 # 下一个字符为 非终结符
                 # 应该使用 first(a)
