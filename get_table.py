@@ -177,14 +177,15 @@ def closure(cur_set: SetI):
                     # 设定前看符号 last_c,
                     last_c = ""
                     # 下一个字符为非终结符，且该非终结符为该句的最后一个字符
-                    # 以该字符扩展出来得到生成式的，前看符继承先前句子的字符
+                    #   则以该字符扩展出来得到生成式的，前看符继承先前句子的字符
                     # 否则 
                     if i.n_p + 1 == i.l_right:
                         last_c = i.end
-                    else:
+                    elif i.right[i.n_p + 1] not in first.no_term:
                         last_c = i.right[i.n_p + 1]
+                    else:
+                        pass
                     
-
                     left = next_term
                     right = list(sentence[left])
                     for k in right:
