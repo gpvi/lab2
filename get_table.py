@@ -34,6 +34,35 @@ co = 0
 for i in t:
     sentence_table[i] = co
     co += 1
+
+
+
+    
+def init_action_table():
+    ch = list(follow.input_set)
+    ch.append("$")
+    # ch_no_term = list(first.no_term)
+    # ch = ch +ch_no_term
+    ch.sort()
+    # print(ch)
+    # get_set()
+    index = [i for i in range(0, 244)]
+    temp = np.zeros((244, len(ch)), dtype="str")
+    df = pd.DataFrame(temp, index=index, columns=ch)
+    # print(df)
+    return df
+
+# DataFrame 类型 纵列 状态index,行：终结符
+def init_goto_table():
+    ch = list(first.no_term)
+    ch.sort()
+    index = [i for i in range(0, 244)]
+    temp = np.zeros((244, len(ch)), dtype="str")
+    df = pd.DataFrame(temp, index=index, columns=ch)
+    return df
+# 以上为初始化数据结构
+# -----------------
+
 class GSentence:
     def __init__(self, l: str, r: list, n: str):
         self.left = l
@@ -170,19 +199,21 @@ def closure(cur_set: SetI):
                     next_ch_table[i.right[i.n_p]].add(i)
 
                 # 下一个字符为 非终结符
-                # 应该使用 first(βa)
-                # 求闭包关键程序，
+                # 应该使用 first(a)
+                # 求闭包关键程序，求闭包只关注下一个字符为非终结符的句子
 #-------------------------------------------------------------------------
+                # 下一个字符为非终结符
                 if next_term in first.no_term:
                     # 设定前看符号 last_c,
                     last_c = ""
-                    # 下一个字符为非终结符，且该非终结符为该句的最后一个字符
-                    #   则以该字符扩展出来得到生成式的，前看符继承先前句子的字符
-                    # 否则 
+
+                    # 非终结符为该句的最后一个字符
                     if i.n_p + 1 == i.l_right:
                         last_c = i.end
+                    # 非终结符在该句的下一个字符为终结符
                     elif i.right[i.n_p + 1] not in first.no_term:
                         last_c = i.right[i.n_p + 1]
+                    # 非终结符在该句的下一个字符为非终结符
                     else:
                         pass
                     
@@ -221,7 +252,6 @@ def goto(cur_set: SetI, x: str):
         temp = SetI(j)
         new_set = temp
     return closure(new_set)
-
 
 # 求解全部状态
 def items(g):
@@ -270,7 +300,6 @@ def items(g):
                                     i.goto_table[ch].add(temp_set)
     return C
 
-
 def get_set():
     g = CSet()
     g = items(g)
@@ -293,29 +322,6 @@ def get_set():
     return g
 
 # DataFrame 类型 纵列 状态index,行：非终结符 +$
-def init_action_table():
-    ch = list(follow.input_set)
-    ch.append("$")
-    # ch_no_term = list(first.no_term)
-    # ch = ch +ch_no_term
-    ch.sort()
-    # print(ch)
-    # get_set()
-    index = [i for i in range(0, 244)]
-    temp = np.zeros((244, len(ch)), dtype="str")
-    df = pd.DataFrame(temp, index=index, columns=ch)
-    # print(df)
-    return df
-
-# DataFrame 类型 纵列 状态index,行：终结符
-def init_goto_table():
-    ch = list(first.no_term)
-    ch.sort()
-    index = [i for i in range(0, 244)]
-    temp = np.zeros((244, len(ch)), dtype="str")
-    df = pd.DataFrame(temp, index=index, columns=ch)
-    return df
-
 # 填写ACTION 和 GOTO
 def start():
     states = get_set()
@@ -352,39 +358,16 @@ def start():
 
     return table_action,table_goto
 
-
 def test():
+    get_set()
     g = GSentence('program\'', ['program'], '$')
     s = SetI([g])
     closure(s)
 
-
 if __name__ == '__main__':
-
-    # pass
-    # get_set()
     # test()
-    # for i in sentence.items():
-    #     print(i)
-
-
-
     action,goto = start()
     # print(action.index)
     action.to_csv('action.csv')
     goto.to_csv('goto.csv')
 
-    # if not os.path.exists('.\\no_term.txt'):
-    #     with open('.\\no_term.txt','w') as f:
-    #         for i in iter(first.no_term):
-    #             t = i+"\n"
-    #             f.write(t)
-    # if not os.path.exists('.\\res_sentence.txt'):
-    #     with open('.\\res_sentence.txt','w') as f:
-    #         for i in t:
-    #             # print(i)
-    #             kt = i + "\n"
-    #             f.write(kt)
-
-    # # print(first.first_set)
-    # # print(first.no_term)
