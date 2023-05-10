@@ -1,0 +1,16 @@
+program ~~~~ $ 
+block ~~~~ $ ( ) ; block bool break do else if join loc while } 
+decls ~~~~ $ ( ) ; block bool break do else if join loc stmts type while } 
+decl ~~~~ $ ( ) ; block bool break do else id if join loc stmts type while } 
+type ~~~~ $ ( ) ; [ ] basic block bool break do else id if join loc num stmts type while } 
+stmts ~~~~ $ ( ) ; block bool break do else if join loc while } 
+stmt ~~~~ $ ( ) ; block bool break do else if join loc while } 
+loc ~~~~ ! != $ && ( ) * + - / ; < <= = == > >= [ ] block bool break do else equality expr factor id if join loc num real rel term true unary while || } 
+bool ~~~~ ! != $ && ( ) * + - / ; < <= == > >= block bool break do else equality expr factor if join loc num real rel term true unary while || } 
+join ~~~~ ! != $ && ( ) * + - / ; < <= == > >= block bool break do else equality expr factor if join loc num real rel term true unary while || } 
+equality ~~~~ ! != $ && ( ) * + - / ; < <= == > >= block bool break do else equality expr factor if join loc num real rel term true unary while || } 
+rel ~~~~ ! != $ && ( ) * + - / ; < <= == > >= block bool break do else equality expr factor if join loc num real rel term true unary while || } 
+expr ~~~~ ! != $ && ( ) * + - / ; < <= == > >= block bool break do else equality expr factor if join loc num real rel term true unary while || } 
+term ~~~~ ! != $ && ( ) * + - / ; < <= == > >= block bool break do else equality expr factor if join loc num real rel term true unary while || } 
+unary ~~~~ ! != $ && ( ) * + - / ; < <= == > >= block bool break do else equality expr factor if join loc num real rel term true unary while || } 
+factor ~~~~ ! != $ && ( ) * + - / ; < <= == > >= block bool break do else equality expr factor if join loc num real rel term true unary while || } 

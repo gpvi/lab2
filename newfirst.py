@@ -1,12 +1,15 @@
 # coding=utf-8
 # path = './lr_sentence.txt'
-class LR_first:
+
+from  get_first import  FirstSet as fs
+class FirstSet:
 
     def __init__(self):
         self.path = './lr_sentence.txt'
         self.first = {}
         self. sentences = {}
         self.no_term = set()
+        self.create_first()
     def read_sentence(self):
         path = self.path
 
@@ -26,8 +29,8 @@ class LR_first:
                 else:
                     sentences[temp[0]].append(temp[1])
         no_term = self.no_term
-        for i in sentences:
-            no_term.add(i)
+        for i in sentences.items():
+            no_term.add(i[0])
 
     def create_first(self):
     # sentences 字典
@@ -58,17 +61,12 @@ class LR_first:
                         else:
                             first[i[0]] = first[i[0]].union(first[term])
 
-# print(first)
-# for i in first.items():
-#     if len(i[1]) == 0:
-#         print(i[0])
-
-# for i in first.items():
-#     print(i[1])
 
 if __name__ == '__main__':
-    first = LR_first()
+    first = FirstSet()
     first.create_first()
-
-    for i in first.first.items():
+    for i in first.sentences.items():
         print(i)
+    # for i in first.no_term:
+    #     print(i)
+    # print(len(first.no_term))

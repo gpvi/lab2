@@ -3,16 +3,19 @@
 import os.path
 import sys
 from copy import deepcopy
-from get_first import FirstSet
+# from get_first import FirstSet
 from get_follow import FollowSet
 import pandas as pd
 import numpy as np
+from newfirst import FirstSet
 
 first = FirstSet()
 follow = FollowSet()
-first_set = first.first_set
+# first_set = first.first_set
+first_set = first.first
 follow_set = follow.follow_set
-sentence = first.sentence
+sentence = first.sentences
+
 # for i in sentence.items():
 #     print(i[0])
 #     for k in i[1]:
@@ -122,7 +125,6 @@ class CSet:
     contain:set类型 元素未 SetI 单个项目
     dic:Hash table 项目集: index #index 为 int 类型
     sort_list = 排序后的项目集
-
     """
     def __init__(self):
         self.count = -1
@@ -144,31 +146,44 @@ class CSet:
         self.sorted_list = sorted(list(self.contain))
 
 
-# sub_function 求闭包，输入为初始状态的第一个语句program'@.program,$
+# sub_function 求闭包，输入为项目
 def closure(cur_set: SetI):
     I = cur_set.contain
-    next_ch_list = {}
+    # 下一个要读的字符 相同句子 放在 同一个set()，next_ch_table键为下一个要读的字符，值为set
+    next_ch_table = {}
     flag = 0
     J = I.copy()
     while flag == 0:
         flag = 1
+        # 拷贝 集合 用于求闭包，与原来的对比是否有变化，有变化flag = 0,无变化flag = 1
         T = J.copy()
         for i in iter(T):
             # 处理未到终结状态的生成式
             if i.n_p < len(i.right):
+                # 点在n_p前，next_term 为点后第一个字符
                 next_term = i.right[i.n_p]
-                if i.right[i.n_p] not in next_ch_list:
-                    next_ch_list[i.right[i.n_p]] = set()
-                    next_ch_list[i.right[i.n_p]].add(i)
+                # 收集 添加下一个字符相同的句子
+                if i.right[i.n_p] not in next_ch_table:
+                    next_ch_table[i.right[i.n_p]] = set()
+                    next_ch_table[i.right[i.n_p]].add(i)
                 else:
-                    next_ch_list[i.right[i.n_p]].add(i)
+                    next_ch_table[i.right[i.n_p]].add(i)
+
+                # 下一个字符为 非终结符
+                # 应该使用 first(βa)
+                # 求闭包关键程序，
+#-------------------------------------------------------------------------
                 if next_term in first.no_term:
-                    # 设定前看符号 last
+                    # 设定前看符号 last_c,
                     last_c = ""
+                    # 下一个字符为非终结符，且该非终结符为该句的最后一个字符
+                    # 以该字符扩展出来得到生成式的，前看符继承先前句子的字符
+                    # 否则 
                     if i.n_p + 1 == i.l_right:
                         last_c = i.end
                     else:
                         last_c = i.right[i.n_p + 1]
+                    
 
                     left = next_term
                     right = list(sentence[left])
@@ -178,8 +193,9 @@ def closure(cur_set: SetI):
                             if new_g not in J:
                                 flag = 0
                                 J.append(new_g)
+#--------------------------------------------------------------------------                                
     I = J
-    cur_set.goto_ch = next_ch_list
+    cur_set.goto_ch = next_ch_table
     cur_set.contain = J
     return cur_set
 
@@ -260,18 +276,18 @@ def get_set():
     g.set_to_index()
     g.sortedc()
 
-# 测试代码
-    # for i in g.sorted_list:
-    #     print("序号:",i.index)
-    #     for j in i.contain:
-    #         print(j.sentence_for_hash)
-    #         # a = j.to_origin_sentence()
-    #         # if a in t:
-    #         #     print("True",sentence_table[a])
-    #         # else:
-    #         #     print('False',a,file=sys.stderr)
-    #         #     sys.exit(0)
-    #     print("--------------------------")
+# # 测试代码
+#     for i in g.sorted_list:
+#         print("序号:",i.index)
+#         for j in i.contain:
+#             print(j.sentence_for_hash)
+#             # a = j.to_origin_sentence()
+#             # if a in t:
+#             #     print("True",sentence_table[a])
+#             # else:
+#             #     print('False',a,file=sys.stderr)
+#             #     sys.exit(0)
+#         print("--------------------------")
 
     return g
 
@@ -347,11 +363,15 @@ if __name__ == '__main__':
     # pass
     # get_set()
     # test()
+    # for i in sentence.items():
+    #     print(i)
+
+
 
     action,goto = start()
-    print(action.index)
-    # action.to_csv('action.csv')
-    # goto.to_csv('goto.csv')
+    # print(action.index)
+    action.to_csv('action.csv')
+    goto.to_csv('goto.csv')
 
     # if not os.path.exists('.\\no_term.txt'):
     #     with open('.\\no_term.txt','w') as f:

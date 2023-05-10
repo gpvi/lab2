@@ -132,6 +132,7 @@ class FirstSet:
             值: 句子(词列表) 列表 ---->二维 
         """
         a = dic_sentence
+
          # 开始 first 创建
         raw_first_term = self.first_set
 
@@ -201,5 +202,7 @@ if __name__ == '__main__':
     # print(type(first.sentence))
     # for i in first.sentence.items():
     #     print(i)
-    for i in first.first_set.items():
-        print(i)
+    # for i in first.first_set.items():
+    #     print(i)
+    # for i in first.sentence.items():
+    #     print(i)
