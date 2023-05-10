@@ -13,9 +13,9 @@ first = FirstSet()
 follow = FollowSet()
 # first_set = first.first_set
 first_set = first.first
-follow_set = follow.follow_set
+# follow_set = follow.follow_set
 sentence = first.sentences
-
+# test:遍历所有句子
 # for i in sentence.items():
 #     print(i[0])
 #     for k in i[1]:
@@ -109,6 +109,7 @@ class GSentence:
     def __hash__(self):
         return hash(self.sentence_for_hash)
 # 单个状态/项目
+
 class SetI:
     """
 
@@ -203,28 +204,70 @@ def closure(cur_set: SetI):
                 # 求闭包关键程序，求闭包只关注下一个字符为非终结符的句子
 #-------------------------------------------------------------------------
                 # 下一个字符为非终结符
+                last_c_list = []
                 if next_term in first.no_term:
                     # 设定前看符号 last_c,
                     last_c = ""
 
-                    # 非终结符为该句的最后一个字符
+                    # # 非终结符为该句的最后一个字符
+                    # if i.n_p + 1 == i.l_right:
+                    #     last_c = i.end
+                    # # 非终结符在该句的下一个字符为终结符
+                    # # 非终结符在该句的下一个字符为非终结符
+                    # else:
+                    #     i.right[i.n_p + 1] not in first.no_term:
+                    #     last_c = i.right[i.n_p + 1]
+                    
+                    #----updata
+                     # 非终结符为该句的最后一个字符
                     if i.n_p + 1 == i.l_right:
-                        last_c = i.end
+                        last_c_list.append(i.end) 
                     # 非终结符在该句的下一个字符为终结符
                     elif i.right[i.n_p + 1] not in first.no_term:
-                        last_c = i.right[i.n_p + 1]
+                        last_c_list.append(i.right[i.n_p + 1] )  
+                
                     # 非终结符在该句的下一个字符为非终结符
                     else:
-                        pass
-                    
+                        end_f = 0
+                        # pass
+                        t_count = i.n_p + 1
+                        term = i.right[t_count]
+
+                        for n in first.first[term]:
+                            if n != first.empty_str:
+                                last_c_list.append(n)
+                        
+                        while first.empty_str in first.first[term] and t_count<i.l_right:
+                            t_count += 1
+                            term = i.right[t_count]
+                            if term not in first.no_term:
+                                last_c_list.append(term)
+                                break
+
+                            for m in first.first[term]:
+                                if i != first.empty_str:
+                                    last_c_list.append(m)
+                        
                     left = next_term
                     right = list(sentence[left])
+                    # print(type(right[0]))
                     for k in right:
-                        if k[0] != 'ε':
-                            new_g = GSentence(left, k, last_c)
-                            if new_g not in J:
-                                flag = 0
-                                J.append(new_g)
+                        if k[0]!= first.empty_str:
+                            for j in last_c_list:
+                                # print(j)
+                                new_g= GSentence(left,k,j)
+                                if new_g not in J:
+                                    flag = 0
+                                    J.append(new_g)
+                    
+                    # left = next_term
+                    # right = list(sentence[left])
+                    # for k in right:
+                    #     if k[0] != 'ε':
+                    #         new_g = GSentence(left, k, last_c)
+                    #         if new_g not in J:
+                    #             flag = 0
+                    #             J.append(new_g)
 #--------------------------------------------------------------------------                                
     I = J
     cur_set.goto_ch = next_ch_table
@@ -242,6 +285,7 @@ def goto(cur_set: SetI, x: str):
         # for each item
         if i.n_p < i.l_right:
             if i.right[i.n_p] == x:
+                # 深拷贝
                 t = deepcopy(i)
                 t.count()
                 j.append(t)

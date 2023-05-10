@@ -2,6 +2,7 @@
 # path = './lr_sentence.txt'
 
 from  get_first import  FirstSet as fs
+from get_follow import FollowSet
 class FirstSet:
 
     def __init__(self):
@@ -10,6 +11,9 @@ class FirstSet:
         self. sentences = {}
         self.no_term = set()
         self.create_first()
+        self.empty_str = 'ε'
+        self.input_term = set()
+        self.get_input_term()
     def read_sentence(self):
         path = self.path
 
@@ -60,13 +64,14 @@ class FirstSet:
                             continue
                         else:
                             first[i[0]] = first[i[0]].union(first[term])
+    def get_input_term(self):
+        for i in self.sentences.items():
+            for j in i[1]:
+                if j[0] not in self.no_term and j[0] != self.empty_str:
+                    self.input_term.add(j[0])
+    
 
 
 if __name__ == '__main__':
     first = FirstSet()
     first.create_first()
-    for i in first.sentences.items():
-        print(i)
-    # for i in first.no_term:
-    #     print(i)
-    # print(len(first.no_term))
