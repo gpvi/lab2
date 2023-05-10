@@ -1,19 +1,13 @@
 # coding=utf-8
 # 数据结构
-import os.path
-import sys
 from copy import deepcopy
-# from get_first import FirstSet
 from get_follow import FollowSet
 import pandas as pd
 import numpy as np
 from newfirst import FirstSet
-
 first = FirstSet()
 follow = FollowSet()
-# first_set = first.first_set
 first_set = first.first
-# follow_set = follow.follow_set
 sentence = first.sentences
 # test:遍历所有句子
 # for i in sentence.items():
@@ -35,21 +29,13 @@ for i in t:
     sentence_table[i] = co
     co += 1
 
-
-
-    
 def init_action_table():
     ch = list(follow.input_set)
     ch.append("$")
-    # ch_no_term = list(first.no_term)
-    # ch = ch +ch_no_term
     ch.sort()
-    # print(ch)
-    # get_set()
     index = [i for i in range(0, 244)]
     temp = np.zeros((244, len(ch)), dtype="str")
     df = pd.DataFrame(temp, index=index, columns=ch)
-    # print(df)
     return df
 
 # DataFrame 类型 纵列 状态index,行：终结符
@@ -108,12 +94,10 @@ class GSentence:
 
     def __hash__(self):
         return hash(self.sentence_for_hash)
+
 # 单个状态/项目
-
 class SetI:
-    """
 
-    """
     def __init__(self, I: list):
         self.index = 0
         # 项目集，其中内容为生成式，确保各个生成式在此项目集的唯一性 采用数据结构 -- list
@@ -208,18 +192,6 @@ def closure(cur_set: SetI):
                 if next_term in first.no_term:
                     # 设定前看符号 last_c,
                     last_c = ""
-
-                    # # 非终结符为该句的最后一个字符
-                    # if i.n_p + 1 == i.l_right:
-                    #     last_c = i.end
-                    # # 非终结符在该句的下一个字符为终结符
-                    # # 非终结符在该句的下一个字符为非终结符
-                    # else:
-                    #     i.right[i.n_p + 1] not in first.no_term:
-                    #     last_c = i.right[i.n_p + 1]
-                    
-                    #----updata
-                     # 非终结符为该句的最后一个字符
                     if i.n_p + 1 == i.l_right:
                         last_c_list.append(i.end) 
                     # 非终结符在该句的下一个字符为终结符
@@ -251,6 +223,7 @@ def closure(cur_set: SetI):
                     left = next_term
                     right = list(sentence[left])
                     # print(type(right[0]))
+                    # 求 闭包
                     for k in right:
                         if k[0]!= first.empty_str:
                             for j in last_c_list:
@@ -259,42 +232,30 @@ def closure(cur_set: SetI):
                                 if new_g not in J:
                                     flag = 0
                                     J.append(new_g)
-                    
-                    # left = next_term
-                    # right = list(sentence[left])
-                    # for k in right:
-                    #     if k[0] != 'ε':
-                    #         new_g = GSentence(left, k, last_c)
-                    #         if new_g not in J:
-                    #             flag = 0
-                    #             J.append(new_g)
-#--------------------------------------------------------------------------                                
-    I = J
+#--------------------------------------------------------------------------
+# 添加进goto table 为跳转提供查询
     cur_set.goto_ch = next_ch_table
     cur_set.contain = J
     return cur_set
 
 #遇到字符执行状态跳转行为
 def goto(cur_set: SetI, x: str):
-    cur_list = cur_set.contain
     j = []
-    if len(cur_set.goto_ch) == 0:
-        return 0
     # cur_list 为 GSentence 列表
+    # goto_ch[]: key : term ;value: Gsentence
     for i in iter(cur_set.goto_ch[x]):
         # for each item
         if i.n_p < i.l_right:
             if i.right[i.n_p] == x:
                 # 深拷贝
-                t = deepcopy(i)
-                t.count()
-                j.append(t)
-
+                # t = deepcopy(i)
+                # count: n_p += 1
+                i.count()
+                j.append(i)
     if len(j) == 0:
         return 1
     else:
-        temp = SetI(j)
-        new_set = temp
+        new_set = SetI(j)
     return closure(new_set)
 
 # 求解全部状态
@@ -305,24 +266,30 @@ def items(g):
     init_I = closure(init_I)
     C.add(init_I)
     flag = 0
+    # 已经 求过闭包的 项目
     already_clu = []
+    # 已经执行过跳转的 项目
     already_goto = []
+
     already_clu.append(0)
+
     while flag == 0:
         flag = 1
         # print(C.count)
         contain1 = C.contain
         contain2 = contain1.copy()
         for i in iter(contain2):
-
             # i type is class SetI
             if i.index in already_goto:
                 continue
             already_goto.append(i.index)
+
             for ch in i.goto_ch:
+                # t: 由ch 出发 创建的新的项目集
                 t = goto(i, ch)
+
                 if type(t) != int:
-                    temp_set = t
+                    temp_set = deepcopy(t)
                     if temp_set not in C.contain:
                         temp_set.from_set = i.index
                         temp_set.by_ch = ch
@@ -367,6 +334,7 @@ def get_set():
 
 # DataFrame 类型 纵列 状态index,行：非终结符 +$
 # 填写ACTION 和 GOTO
+
 def start():
     states = get_set()
     # for i in states.sorted_list:
