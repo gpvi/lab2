@@ -176,7 +176,8 @@ def closure(cur_set: SetI):
                     next_ch_table[i.right[i.n_p]] = []
                     next_ch_table[i.right[i.n_p]].append(i)
                 else:
-                    next_ch_table[i.right[i.n_p]].append(i)
+                    if i not in  next_ch_table[i.right[i.n_p]]:
+                        next_ch_table[i.right[i.n_p]].append(i)
 
                 # 下一个字符为 非终结符
                 # 应该使用 first(a)
@@ -243,7 +244,7 @@ def closure(cur_set: SetI):
                         if k[0] != first.empty_str:
                             for j in last_c_list:
                                 # print(j)
-                                new_g = GSentence(left, k, j)
+                                new_g = GSentence(left, k, last_c_list[0])
                                 if new_g not in J:
                                     flag = 0
                                     J.append(new_g)
